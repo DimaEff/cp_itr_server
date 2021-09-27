@@ -2,14 +2,15 @@ import {BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table} from "se
 import {ApiProperty} from "@nestjs/swagger";
 
 import {User} from "../users/users.model";
-import {Solution} from "./solution.model";
+import {Solution} from "../solutions/solution.model";
+import {Theme} from "../themes/theme.model";
 
 
 interface TaskCreationAttrs {
     title: string;
     text: string;
     user_id: number;
-    // theme_id: number;
+    theme_id: number;
 }
 
 @Table({tableName: 'tasks'})
@@ -30,7 +31,6 @@ export class Task extends Model<Task, TaskCreationAttrs> {
     @Column({type: DataType.INTEGER, allowNull: false})
     user_id: number;
 
-    @ApiProperty({example: User})
     @BelongsTo(() => User)
     author: () => User;
 
@@ -38,15 +38,14 @@ export class Task extends Model<Task, TaskCreationAttrs> {
     @HasMany(() => Solution)
     solutions: Solution[];
 
-    // @ForeignKey(() => Theme)
-    // @Column({type: DataType.INTEGER, allowNull: false})
-    // theme_id: number;
+    @ForeignKey(() => Theme)
+    @Column({type: DataType.INTEGER, allowNull: false})
+    theme_id: number;
 
-    // @ApiProperty({example: Theme})
-    // @BelongsToMany()
-    // theme: Theme;
+    @BelongsTo(() => Theme)
+    theme: Theme;
 
     // @ApiProperty({example: Image[]})
     // @HasMany(() => Image)
-    // theme: Image[];
+    // images: Image[];
 }

@@ -20,10 +20,10 @@ import {Task} from "../tasks/task.model";
         RolesModule,
         forwardRef(() => AuthModule),
         HelperModule,
-        // AuthModule,
     ],
     exports: [
         UsersService,
+        HelperModule,
     ]
 })
 export class UsersModule {}

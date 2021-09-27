@@ -12,7 +12,7 @@ const start = async () => {
         .setTitle('Course project for the company "itransition"')
         .build();
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api/docs', app, document);
+    SwaggerModule.setup('/api/docs', app, document);
 
     await app.listen(PORT, () => console.log(`Server started on port: ${PORT}`))
 };

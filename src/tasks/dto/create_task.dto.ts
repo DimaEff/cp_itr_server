@@ -10,4 +10,7 @@ export class CreateTaskDto {
 
     @ApiProperty({example: 1})
     readonly user_id: number;
+
+    @ApiProperty({example: 1})
+    readonly theme_id: number;
 }

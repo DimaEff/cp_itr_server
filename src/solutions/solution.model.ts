@@ -1,7 +1,7 @@
 import {BelongsTo, Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
 import {ApiProperty} from "@nestjs/swagger";
 
-import {Task} from "./task.model";
+import {Task} from "../tasks/task.model";
 
 
 interface SolutionCreationAttrs {

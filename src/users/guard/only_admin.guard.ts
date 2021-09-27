@@ -18,7 +18,6 @@ export class OnlyAdmin implements CanActivate {
         try {
             const userDataByToken = this.helperService.getUserDateByBearerToken(context);
             const user = await this.usersService.getUser(userDataByToken.id);
-
             return user.roles.some(({value}) => value === 'ADMIN');
         } catch (e) {
             throw new HttpException('No access', HttpStatus.FORBIDDEN);

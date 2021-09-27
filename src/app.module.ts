@@ -11,8 +11,10 @@ import { AuthModule } from './auth/auth.module';
 import { HelperModule } from './helper/helper.module';
 import { TasksModule } from './tasks/tasks.module';
 import {Task} from "./tasks/task.model";
-import {Solution} from "./tasks/solution.model";
-import {JwtModule} from "@nestjs/jwt";
+import {Solution} from "./solutions/solution.model";
+import { SolutionsModule } from './solutions/solutions.module';
+import { ThemesModule } from './themes/themes.module';
+import {Theme} from "./themes/theme.model";
 
 
 @Module({
@@ -29,7 +31,7 @@ import {JwtModule} from "@nestjs/jwt";
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DB,
-            models: [User, Role, UserRole, Task, Solution],
+            models: [User, Role, UserRole, Task, Solution, Theme],
             autoLoadModels: true,
         }),
         UsersModule,
@@ -37,6 +39,8 @@ import {JwtModule} from "@nestjs/jwt";
         AuthModule,
         HelperModule,
         TasksModule,
+        SolutionsModule,
+        ThemesModule,
     ],
 })
 export class AppModule {

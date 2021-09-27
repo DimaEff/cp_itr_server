@@ -21,9 +21,8 @@ export class AuthService {
         if (user) {
             return this.getAccessToken(user);
         } else {
-            const newUserObj = await this.registration(req.user);
-
-            const newUser = plainToClass(User, newUserObj);
+            const userDto = plainToClass(CreateUserDto, req.user);
+            const newUser = await this.registration(userDto);
             return this.getAccessToken(newUser);
         }
     }
@@ -33,13 +32,10 @@ export class AuthService {
             id: user.id,
             sn_uid: user.sn_uid,
         };
-
         return {accessToken: this.jwtService.sign(payload)};
     }
 
-    private async registration(userData: any) {
-        const dto = plainToClass(CreateUserDto, userData);
-
+    private async registration(dto: CreateUserDto) {
         const newUser = await this.usersService.createUser(dto);
         return newUser;
     }
