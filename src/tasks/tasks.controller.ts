@@ -28,7 +28,7 @@ export class TasksController {
     @UseGuards(AuthGuard('jwt'))
     @Post()
     createTask(@Body() dto: CreateTaskDto) {
-        return this.tasksService.createTask(dto)
+        return this.tasksService.createTask(dto);
     }
 
     @ApiOperation({summary: 'Delete a task'})
@@ -36,14 +36,14 @@ export class TasksController {
     @UseGuards(AuthGuard('jwt'))
     @Post('/delete')
     deleteTask(@Body() dto: DeleteTaskDto) {
-        return this.tasksService.deleteTask(dto)
+        return this.tasksService.deleteTask(dto);
     }
 
     @ApiOperation({summary: 'Creating a solution'})
-    @ApiResponse({status: 200, type: Solution})
+    @ApiResponse({status: 200, type: [Solution]})
     @UseGuards(AuthGuard('jwt'))
     @Post('/solutions')
-    createSolution(@Body() dto: CreateSolutionDto) {
-        return this.tasksService.createSolution(dto)
+    createSolution(@Body() dtos: CreateSolutionDto[]) {
+        return this.tasksService.addSolutions(dtos);
     }
 }

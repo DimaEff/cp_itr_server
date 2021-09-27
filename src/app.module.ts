@@ -12,6 +12,7 @@ import { HelperModule } from './helper/helper.module';
 import { TasksModule } from './tasks/tasks.module';
 import {Task} from "./tasks/task.model";
 import {Solution} from "./tasks/solution.model";
+import {JwtModule} from "@nestjs/jwt";
 
 
 @Module({

@@ -29,6 +29,7 @@ export class UsersService {
     }
 
     async getUser(id: string) {
+        console.log(id, 'getUser')
         const user = await this.usersRepository
             .findByPk(id, {include: {all: true}});
         return user;

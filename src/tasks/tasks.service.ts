@@ -37,7 +37,12 @@ export class TasksService {
         }
     }
 
-    async createSolution(dto: CreateSolutionDto) {
+    async addSolutions(dtos: CreateSolutionDto[]) {
+        const solutions = await Promise.all(dtos.map(dto => this.createSolution(dto)));
+        return solutions;
+    }
+
+    private async createSolution(dto: CreateSolutionDto) {
         const solution = await this.solutionsRepository.create({...dto, text: dto.text.toLowerCase()});
         return solution;
     }
