@@ -15,16 +15,25 @@ export class UsersService {
         const user = await this.usersRepository.create(dto);
         const role = await this.roleService.getRoleByValue('USER');
         await user.$set('roles', [role.id]);
+        user.roles = [role];
         return user;
     }
 
     async getAllUsers() {
-        const users = await this.usersRepository.findAll({include: {all: true}});
+        const users = await this.usersRepository
+            .findAll({include: {all: true}});
         return users;
     }
 
+    async getUser(id: string) {
+        const user = await this.usersRepository
+            .findByPk(id, {include: {all: true}});
+        return user;
+    }
+
     async getUserBySNId(sn_uid: string) {
-        const user = await this.usersRepository.findOne({where: {sn_uid}, include: {all: true}});
+        const user = await this.usersRepository
+            .findOne({where: {sn_uid}, include: {all: true}});
         return user;
     }
 }

@@ -28,6 +28,7 @@ export class User extends Model<User, UserCreationAttrs> {
     @Column({type: DataType.BOOLEAN, defaultValue: false})
     banned: boolean;
 
+    @ApiProperty({example: [{id: 2, value: 'USER'}]})
     @BelongsToMany(() => Role, () => UserRole)
     roles: Role[];
 }

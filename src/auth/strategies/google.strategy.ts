@@ -19,7 +19,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         const user = {
             sn_uid: id,
             user_name: displayName,
-            // accessToken,
         };
         done(null, user);
     }
