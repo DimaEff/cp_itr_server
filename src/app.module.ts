@@ -8,6 +8,7 @@ import {RolesModule} from './roles/roles.module';
 import {Role} from "./roles/roles.model";
 import {UserRole} from "./roles/user_role.model";
 import { AuthModule } from './auth/auth.module';
+import { HelperModule } from './helper/helper.module';
 
 
 @Module({
@@ -30,6 +31,7 @@ import { AuthModule } from './auth/auth.module';
         UsersModule,
         RolesModule,
         AuthModule,
+        HelperModule,
     ],
 })
 export class AppModule {
