@@ -1,10 +1,7 @@
 import {ApiProperty} from "@nestjs/swagger";
 
 
-export class SetUserBannedDto {
+export class DeleteUserDto {
     @ApiProperty({example: 1})
     readonly user_id: number;
-
-    @ApiProperty({example: true})
-    readonly banned: boolean;
 }

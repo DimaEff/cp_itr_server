@@ -3,7 +3,7 @@ import {ApiProperty} from "@nestjs/swagger";
 
 import {Role} from "../roles/roles.model";
 import {UserRole} from '../roles/user_role.model';
-// import {Task} from "../tasks/task.model";
+import {Task} from "../tasks/task.model";
 
 
 interface UserCreationAttrs {
@@ -32,6 +32,6 @@ export class User extends Model<User, UserCreationAttrs> {
     @BelongsToMany(() => Role, () => UserRole)
     roles: Role[];
 
-    // @HasMany(() => Task)
-    // tasks: Task[];
+    @HasMany(() => Task)
+    tasks: Task[];
 }
