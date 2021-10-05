@@ -6,12 +6,15 @@ import {Task} from "./task.model";
 import {DeleteTaskDto} from "./dto/delete_task.dto";
 import {Solution} from "./solution.model";
 import {CreateSolutionDto} from "./dto/create_solution.dto";
+import {CreateOrUpdateDto} from "./dto/create_or_update_task.dto";
+import {plainToClass} from "class-transformer";
 
 
 @Injectable()
 export class TasksService {
     constructor(@InjectModel(Task) private tasksRepository: typeof Task,
-                @InjectModel(Solution) private solutionsRepository: typeof Solution) {}
+                @InjectModel(Solution) private solutionsRepository: typeof Solution) {
+    }
 
     async getAllTasks() {
         const tasks = await this.tasksRepository
@@ -19,7 +22,28 @@ export class TasksService {
         return tasks;
     }
 
+    async getTask(id: number) {
+        const task = this.tasksRepository.findByPk(id, {include: {all: true}});
+        return task;
+    }
+
+    async createOrUpdateTask(dto: CreateOrUpdateDto) {
+        console.log('start', dto)
+        if (dto.task_id) {
+            const deleteDto = plainToClass(DeleteTaskDto, {task_id: dto.task_id});
+            await this.deleteTask(deleteDto);
+        }
+
+        const task = await this.createTask(dto.task);
+
+        const solutions = await this.addSolutions(task.id, dto.solutions);
+
+        task.solutions = solutions;
+        return task;
+    }
+
     async createTask(dto: CreateTaskDto) {
+        console.log('create task', dto)
         try {
             const task = await this.tasksRepository.create(dto);
             return task;
@@ -29,16 +53,19 @@ export class TasksService {
     }
 
     async deleteTask(dto: DeleteTaskDto) {
+        console.log('delete task', dto)
         try {
-            const task = await this.tasksRepository.findByPk(dto.task_id);
+            const task = await this.getTask(dto.task_id);
             await task.destroy();
         } catch (e) {
-            throw new HttpException('Task or user not found', HttpStatus.NOT_FOUND);
+            throw new HttpException('Task not found', HttpStatus.NOT_FOUND);
         }
     }
 
-    async addSolutions(dtos: CreateSolutionDto[]) {
-        const solutions = await Promise.all(dtos.map(dto => this.createSolution(dto)));
+    async addSolutions(task_id: number, newSolutions: CreateSolutionDto[]) {
+        console.log('add solutions', task_id, newSolutions)
+        const solutionsForAdding = newSolutions.map(solution => ({...solution, task_id}));
+        const solutions = await Promise.all(solutionsForAdding.map(s => this.createSolution(s)));
         return solutions;
     }
 

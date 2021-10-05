@@ -4,7 +4,7 @@ import {User} from "../users/users.model";
 import {Role} from "./roles.model";
 
 
-@Table({tableName: 'user_role', createdAt: false, updatedAt: false})
+@Table({tableName: 'user_role'})
 export class UserRole extends Model<UserRole> {
     @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
     id: number;
