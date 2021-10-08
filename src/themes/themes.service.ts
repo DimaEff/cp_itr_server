@@ -22,4 +22,9 @@ export class ThemesService {
         const themes = await this.themesRepository.findAll({include: {all: true}});
         return themes;
     }
+
+    async getThemeByTitle(title: string) {
+        const theme = await this.themesRepository.findOne({where: {title}});
+        return theme;
+    }
 }

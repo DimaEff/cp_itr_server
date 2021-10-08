@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Param, Post, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Query, UseGuards} from '@nestjs/common';
 import {AuthGuard} from "@nestjs/passport";
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 
@@ -6,6 +6,7 @@ import {TasksService} from "./tasks.service";
 import {Task} from "./task.model";
 import {DeleteTaskDto} from "./dto/delete_task.dto";
 import {CreateOrUpdateDto} from "./dto/create_or_update_task.dto";
+import {FilterGetAllDto} from "./dto/filter_get_all.dto";
 
 
 
@@ -17,8 +18,8 @@ export class TasksController {
     @ApiOperation({summary: 'Get all tasks'})
     @ApiResponse({status: 200, type: [Task]})
     @Get()
-    getAll() {
-        return this.tasksService.getAllTasks();
+    getAll(@Query() query: FilterGetAllDto) {
+        return this.tasksService.getAllTasks(query);
     }
 
     @ApiOperation({summary: 'Creating a task'})

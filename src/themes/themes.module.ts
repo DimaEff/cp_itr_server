@@ -6,7 +6,6 @@ import {ThemesService} from './themes.service';
 import {Theme} from "./theme.model";
 import {UsersModule} from "../users/users.module";
 import {Task} from "../tasks/task.model";
-import {TasksModule} from "../tasks/tasks.module";
 
 
 @Module({
@@ -15,7 +14,9 @@ import {TasksModule} from "../tasks/tasks.module";
     imports: [
         SequelizeModule.forFeature([Task, Theme]),
         UsersModule,
-        TasksModule,
+    ],
+    exports: [
+        ThemesService,
     ]
 })
 export class ThemesModule {

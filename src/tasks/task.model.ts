@@ -1,9 +1,11 @@
-import {BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table} from "sequelize-typescript";
+import {BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model, Table} from "sequelize-typescript";
 import {ApiProperty} from "@nestjs/swagger";
 
 import {User} from "../users/users.model";
 import {Solution} from "../solutions/solution.model";
 import {Theme} from "../themes/theme.model";
+import {TaskTag} from "./task_tag.model";
+import {Tag} from "../tags/tag.model";
 
 
 interface TaskCreationAttrs {
@@ -45,7 +47,6 @@ export class Task extends Model<Task, TaskCreationAttrs> {
     @BelongsTo(() => Theme)
     theme: Theme;
 
-    // @ApiProperty({example: Image[]})
-    // @HasMany(() => Image)
-    // images: Image[];
+    @BelongsToMany(() => Tag, () => TaskTag)
+    tags: Tag[];
 }

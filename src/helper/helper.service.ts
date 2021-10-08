@@ -1,6 +1,8 @@
 import {ExecutionContext, Injectable} from '@nestjs/common';
 import {JwtService} from "@nestjs/jwt";
 
+import {PaginationDto} from "./dto/pagination.dto";
+
 
 @Injectable()
 export class HelperService {
@@ -19,5 +21,12 @@ export class HelperService {
         } catch (e) {
             console.log(e)
         }
+    }
+
+    getPaginationValues (paginationDto: PaginationDto, defaultLimit: number = 10, startPage: number = 0) {
+        const limit = paginationDto?.limit || defaultLimit;
+        const offset = ((paginationDto?.page - 1) * limit) || startPage;
+
+        return {limit, offset};
     }
 }

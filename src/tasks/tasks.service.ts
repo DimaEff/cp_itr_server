@@ -7,16 +7,55 @@ import {Task} from "./task.model";
 import {DeleteTaskDto} from "./dto/delete_task.dto";
 import {CreateOrUpdateDto} from "./dto/create_or_update_task.dto";
 import {SolutionsService} from "../solutions/solutions.service";
+import {FilterGetAllDto} from "./dto/filter_get_all.dto";
+import {User} from "../users/users.model";
+import {Theme} from "../themes/theme.model";
+import {Tag} from "../tags/tag.model";
+import {Solution} from "../solutions/solution.model";
+import {HelperService} from "../helper/helper.service";
+import {PaginationDto} from "../helper/dto/pagination.dto";
 
 
 @Injectable()
 export class TasksService {
     constructor(@InjectModel(Task) private tasksRepository: typeof Task,
-                private solutionService: SolutionsService) {}
+                private solutionService: SolutionsService,
+                private helperService: HelperService) {}
 
-    async getAllTasks() {
+    async getAllTasks(query: FilterGetAllDto) {
+        const themeWhere = {};
+        if (query.theme) {
+            themeWhere['title'] = query.theme;
+        }
+
+        const paginationQuery = plainToClass(PaginationDto, query);
+        const pagination = this.helperService.getPaginationValues(paginationQuery)
+
         const tasks = await this.tasksRepository
-            .findAll({include: {all: true}});
+            .findAndCountAll({
+                ...pagination,
+                distinct: true,
+                include: [
+                    {
+                        model: User,
+                        attributes: ['id', 'sn_uid', 'user_name'],
+                    },
+                    {
+                        model: Theme,
+                        where: themeWhere,
+                        attributes: ['id', 'title'],
+                    },
+                    {
+                        model: Tag,
+                        attributes: ['id', 'title'],
+                    },
+                    {
+                        model: Solution,
+                        attributes: ['id', 'text'],
+                    },
+                ],
+                order: [['createdAt', 'DESC']],
+            });
         return tasks;
     }
 
