@@ -117,7 +117,7 @@ export class TasksService {
 
         if (filterSettings.theme) themeWhere['title'] = filterSettings.theme;
         if (filterSettings.user_id) usersWhere['id'] = filterSettings.user_id;
-        if (filterSettings.tags) tagsWhere['title'] = filterSettings.tags;
+        if (filterSettings.tags.length > 0) tagsWhere['title'] = filterSettings.tags;
 
         return {themeWhere, usersWhere, tagsWhere};
     }
