@@ -7,6 +7,7 @@ import {Task} from "./task.model";
 import {DeleteTaskDto} from "./dto/delete_task.dto";
 import {CreateOrUpdateDto} from "./dto/create_or_update_task.dto";
 import {FilterGetAllDto} from "./dto/filter_get_all.dto";
+import {PaginationDto} from "../helper/dto/pagination.dto";
 
 
 
@@ -17,23 +18,24 @@ export class TasksController {
 
     @ApiOperation({summary: 'Get all tasks'})
     @ApiResponse({status: 200, type: [Task]})
-    @Get()
-    getAll(@Query() query: FilterGetAllDto) {
-        return this.tasksService.getAllTasks(query);
+    @Post()
+    getAll(@Query() paginationSettings: PaginationDto, @Body() filterSettings: FilterGetAllDto) {
+        return this.tasksService.getAllTasks(paginationSettings, filterSettings);
     }
 
     @ApiOperation({summary: 'Creating a task'})
     @ApiResponse({status: 200, type: Task})
     @UseGuards(AuthGuard('jwt'))
-    @Post()
+    @Post('/create')
     createTask(@Body() dto: CreateOrUpdateDto) {
+        console.log('controller')
         return this.tasksService.createOrUpdateTask(dto);
     }
 
     @ApiOperation({summary: 'Delete a task'})
     @ApiResponse({status: 200})
     @UseGuards(AuthGuard('jwt'))
-    @Post()
+    @Post('delete')
     deleteTask(@Body() dto: DeleteTaskDto) {
         return this.tasksService.deleteTask(dto);
     }

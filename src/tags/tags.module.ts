@@ -13,6 +13,9 @@ import {TaskTag} from "../tasks/task_tag.model";
     controllers: [TagsController],
     imports: [
         SequelizeModule.forFeature([Task, Tag, TaskTag]),
+    ],
+    exports: [
+        TagsService,
     ]
 })
 export class TagsModule {}

@@ -11,6 +11,7 @@ import {Theme} from "../themes/theme.model";
 import {Tag} from "../tags/tag.model";
 import {TaskTag} from "./task_tag.model";
 import {HelperModule} from "../helper/helper.module";
+import {TagsModule} from "../tags/tags.module";
 
 
 @Module({
@@ -20,6 +21,7 @@ import {HelperModule} from "../helper/helper.module";
         SequelizeModule.forFeature([Task, User, Solution, Theme, Tag, TaskTag]),
         SolutionsModule,
         HelperModule,
+        TagsModule,
     ]
 })
 export class TasksModule {}

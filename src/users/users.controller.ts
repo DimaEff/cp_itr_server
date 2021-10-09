@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Param, Post, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Query, UseGuards} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 
 import {CreateUserDto} from "./dto/create_user.dto";
@@ -10,6 +10,7 @@ import {AddUserRoleDto} from "./dto/add_user_role.dto";
 import {SetUserBannedDto} from "./dto/set_user_banned.dto";
 import {BannedGuard} from "./guard/banned.guard";
 import {DeleteUserDto} from "./dto/delete_user.dto";
+import {PaginationDto} from "../helper/dto/pagination.dto";
 
 
 @ApiTags('users')
@@ -30,8 +31,8 @@ export class UsersController {
     @UseGuards(OnlyAdmin)
     @UseGuards(AuthGuard('jwt'))
     @Get()
-    getAll() {
-        return this.usersService.getAllUsers();
+    getAll(@Query() query: PaginationDto) {
+        return this.usersService.getAllUsers(query);
     }
 
     @ApiOperation({summary: 'Get a user by social network id'})

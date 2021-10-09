@@ -1,9 +1,9 @@
 import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {InjectModel} from "@nestjs/sequelize";
+import {Op} from "sequelize";
+
 import {Solution} from "./solution.model";
 import {CreateSolutionDto} from "../tasks/dto/create_solution.dto";
-import {plainToClass} from "class-transformer";
-import {Op} from "sequelize";
 
 
 @Injectable()
@@ -11,9 +11,8 @@ export class SolutionsService {
     constructor(@InjectModel(Solution) private solutionsRepository: typeof Solution) {
     }
 
-    async addSolutions(task_id: number, newSolutions: CreateSolutionDto[]) {
-        const solutionsForAdding = newSolutions.map(solution => ({...solution, task_id}));
-        console.log(solutionsForAdding);
+    async addSolutions(task_id: number, newSolutions: string[]) {
+        const solutionsForAdding = newSolutions.map(solution => ({text: solution, task_id}));
         const solutions = await this.solutionsRepository.bulkCreate(solutionsForAdding);
         return solutions;
     }
@@ -24,7 +23,6 @@ export class SolutionsService {
                 id: {[Op.in]: ids},
             }
         });
-        // await Promise.all(ids.map(id => this.deleteSolution(id)));
     }
 
     private async createSolution(dto: CreateSolutionDto) {

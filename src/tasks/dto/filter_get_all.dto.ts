@@ -1,8 +1,5 @@
-import {PaginationDto} from "../../helper/dto/pagination.dto";
-
-
-export class FilterGetAllDto extends PaginationDto {
+export class FilterGetAllDto {
     readonly theme: string | undefined;
-    // readonly limit: number | undefined;
-    // readonly page: number | undefined;
+    readonly user_id: string | undefined;
+    readonly tags: string[] | undefined;
 }

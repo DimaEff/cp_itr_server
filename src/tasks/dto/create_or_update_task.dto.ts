@@ -1,9 +1,6 @@
 import {ApiProperty} from "@nestjs/swagger";
 
-import {CreateSolutionDto} from "./create_solution.dto";
 import {CreateTaskDto} from "./create_task.dto";
-import {Task} from "../task.model";
-import {Solution} from "../../solutions/solution.model";
 
 
 export class CreateOrUpdateDto {
@@ -13,6 +10,9 @@ export class CreateOrUpdateDto {
     @ApiProperty({example: 1})
     readonly task: CreateTaskDto;
 
-    @ApiProperty({example: 1})
-    readonly solutions: CreateSolutionDto[];
+    @ApiProperty({example: ['20x', '5']})
+    readonly solutions: string[];
+
+    @ApiProperty({example: ['java script', 'db']})
+    readonly tags: string[];
 }

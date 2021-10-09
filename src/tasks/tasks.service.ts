@@ -14,22 +14,20 @@ import {Tag} from "../tags/tag.model";
 import {Solution} from "../solutions/solution.model";
 import {HelperService} from "../helper/helper.service";
 import {PaginationDto} from "../helper/dto/pagination.dto";
+import {TagsService} from "../tags/tags.service";
 
 
 @Injectable()
 export class TasksService {
     constructor(@InjectModel(Task) private tasksRepository: typeof Task,
                 private solutionService: SolutionsService,
-                private helperService: HelperService) {}
+                private helperService: HelperService,
+                private tagsService: TagsService) {}
 
-    async getAllTasks(query: FilterGetAllDto) {
-        const themeWhere = {};
-        if (query.theme) {
-            themeWhere['title'] = query.theme;
-        }
+    async getAllTasks(paginationSettings: PaginationDto, filterSettings: FilterGetAllDto) {
+        const {themeWhere, usersWhere, tagsWhere} = this.getFilterSettings(filterSettings);
 
-        const paginationQuery = plainToClass(PaginationDto, query);
-        const pagination = this.helperService.getPaginationValues(paginationQuery)
+        const pagination = this.helperService.getPaginationValues(paginationSettings);
 
         const tasks = await this.tasksRepository
             .findAndCountAll({
@@ -38,6 +36,7 @@ export class TasksService {
                 include: [
                     {
                         model: User,
+                        where: usersWhere,
                         attributes: ['id', 'sn_uid', 'user_name'],
                     },
                     {
@@ -47,6 +46,7 @@ export class TasksService {
                     },
                     {
                         model: Tag,
+                        where: tagsWhere,
                         attributes: ['id', 'title'],
                     },
                     {
@@ -70,14 +70,19 @@ export class TasksService {
 
         if (dto.task_id) {
             task = await this.updateTask(dto.task_id, newTaskData);
-            await this.solutionService.deleteSolutions(task.solutions.map(solution => solution.id));
+            await this.solutionService
+                .deleteSolutions(task.solutions.map(solution => solution.id));
         } else {
             task = await this.createTask(newTaskData);
         }
 
         const solutions = await this.solutionService.addSolutions(task.id, dto.solutions);
+        const tags = await this.tagsService.getTagsByTitles(dto.tags);
+        await task.$set('tags', tags.map(tag => tag.id));
 
         task.solutions = solutions;
+        task.tags = tags;
+
         return task;
     }
 
@@ -103,5 +108,17 @@ export class TasksService {
         const task = await this.getTask(id);
         await task.update(newData);
         return task;
+    }
+
+    private getFilterSettings(filterSettings: FilterGetAllDto) {
+        const themeWhere = {};
+        const usersWhere = {};
+        const tagsWhere = {};
+
+        if (filterSettings.theme) themeWhere['title'] = filterSettings.theme;
+        if (filterSettings.user_id) usersWhere['id'] = filterSettings.user_id;
+        if (filterSettings.tags) tagsWhere['title'] = filterSettings.tags;
+
+        return {themeWhere, usersWhere, tagsWhere};
     }
 }

@@ -7,12 +7,17 @@ import {RolesService} from "../roles/roles.service";
 import {AddUserRoleDto} from "./dto/add_user_role.dto";
 import {SetUserBannedDto} from "./dto/set_user_banned.dto";
 import {DeleteUserDto} from "./dto/delete_user.dto";
+import {PaginationDto} from "../helper/dto/pagination.dto";
+import {HelperService} from "../helper/helper.service";
+import {Role} from "../roles/roles.model";
 
 
 @Injectable()
 export class UsersService {
     constructor(@InjectModel(User) private usersRepository: typeof User,
-                private roleService: RolesService) {}
+                private roleService: RolesService,
+                private helperService: HelperService) {
+    }
 
     async createUser(dto: CreateUserDto) {
         const user = await this.usersRepository.create(dto);
@@ -22,9 +27,20 @@ export class UsersService {
         return user;
     }
 
-    async getAllUsers() {
+    async getAllUsers(query: PaginationDto) {
+        const pagination = this.helperService.getPaginationValues(query);
+
         const users = await this.usersRepository
-            .findAll({include: {all: true}});
+            .findAndCountAll({
+                ...pagination,
+                distinct: true,
+                include: [
+                    {
+                        model: Role,
+                        attributes: ['id', 'value'],
+                    },
+                ],
+            });
         return users;
     }
 
