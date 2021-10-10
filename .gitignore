@@ -37,3 +37,6 @@ lerna-debug.log*
 # enviroment
 .production.env
 .development.env
+
+# google cloud storage
+src/images/cp-itr-b84639e70e2f.json

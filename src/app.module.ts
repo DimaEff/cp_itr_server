@@ -18,6 +18,7 @@ import {Theme} from "./themes/theme.model";
 import {TagsModule} from './tags/tags.module';
 import {Tag} from "./tags/tag.model";
 import {TaskTag} from "./tasks/task_tag.model";
+import { ImagesModule } from './images/images.module';
 
 
 @Module({
@@ -45,6 +46,7 @@ import {TaskTag} from "./tasks/task_tag.model";
         SolutionsModule,
         ThemesModule,
         TagsModule,
+        ImagesModule,
     ],
 })
 export class AppModule {
