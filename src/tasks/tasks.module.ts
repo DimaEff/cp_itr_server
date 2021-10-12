@@ -1,4 +1,4 @@
-import {Module} from '@nestjs/common';
+import {forwardRef, Module} from '@nestjs/common';
 import {SequelizeModule} from "@nestjs/sequelize";
 
 import {TasksController} from './tasks.controller';
@@ -12,16 +12,30 @@ import {Tag} from "../tags/tag.model";
 import {TaskTag} from "./task_tag.model";
 import {HelperModule} from "../helper/helper.module";
 import {TagsModule} from "../tags/tags.module";
+import {ImagesModule} from "../images/images.module";
+import {Image} from "../images/image.model";
+import {CommentsModule} from "../comments/comments.module";
+import {UserCommentRating} from "../comments/user-comment-rating.model";
+import {UserTaskSolved} from "../solutions/user-task-solved.model";
+import {UserTaskRating} from "./user-task-rating.model";
 
 
 @Module({
     controllers: [TasksController],
     providers: [TasksService],
     imports: [
-        SequelizeModule.forFeature([Task, User, Solution, Theme, Tag, TaskTag]),
+        SequelizeModule.forFeature(
+            [Task, User, Solution, Theme, Tag, TaskTag, Image, UserCommentRating, UserTaskSolved, UserTaskRating]
+        ),
         SolutionsModule,
         HelperModule,
         TagsModule,
+        ImagesModule,
+        CommentsModule,
+    ],
+    exports: [
+        TasksService,
     ]
 })
-export class TasksModule {}
+export class TasksModule {
+}

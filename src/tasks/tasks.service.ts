@@ -15,14 +15,20 @@ import {Solution} from "../solutions/solution.model";
 import {HelperService} from "../helper/helper.service";
 import {PaginationDto} from "../helper/dto/pagination.dto";
 import {TagsService} from "../tags/tags.service";
+import {Image} from "../images/image.model";
+import {ImagesService} from "../images/images.service";
+import {AddTaskRatingDto} from "./dto/add_task_rating.dto";
+import {UserTaskRating} from "./user-task-rating.model";
 
 
 @Injectable()
 export class TasksService {
     constructor(@InjectModel(Task) private tasksRepository: typeof Task,
+                @InjectModel(UserTaskRating) private taskRatingRepository: typeof UserTaskRating,
                 private solutionService: SolutionsService,
                 private helperService: HelperService,
-                private tagsService: TagsService) {}
+                private tagsService: TagsService,
+                private imagesService: ImagesService,) {}
 
     async getAllTasks(paginationSettings: PaginationDto, filterSettings: FilterGetAllDto) {
         const {themeWhere, usersWhere, tagsWhere} = this.getFilterSettings(filterSettings);
@@ -53,6 +59,10 @@ export class TasksService {
                         model: Solution,
                         attributes: ['id', 'text'],
                     },
+                    {
+                        model: Image,
+                        attributes: ['image_url'],
+                    },
                 ],
                 order: [['createdAt', 'DESC']],
             });
@@ -64,7 +74,7 @@ export class TasksService {
         return task;
     }
 
-    async createOrUpdateTask(dto: CreateOrUpdateDto) {
+    async createOrUpdateTask(dto: CreateOrUpdateDto, images: any[]) {
         let task;
         const newTaskData = plainToClass(CreateTaskDto, dto.task);
 
@@ -76,12 +86,13 @@ export class TasksService {
             task = await this.createTask(newTaskData);
         }
 
-        const solutions = await this.solutionService.addSolutions(task.id, dto.solutions);
-        const tags = await this.tagsService.getTagsByTitles(dto.tags);
-        await task.$set('tags', tags.map(tag => tag.id));
-
-        task.solutions = solutions;
-        task.tags = tags;
+        const additionalData = {
+            id: task.id,
+            solutions: dto.solutions,
+            tags: dto.tags,
+            images: images.map(img => img.filename),
+        };
+        await this.setAdditionalTaskData(task, additionalData);
 
         return task;
     }
@@ -104,6 +115,30 @@ export class TasksService {
         }
     }
 
+    async addTaskRating(dto: AddTaskRatingDto) {
+        await this.checkIsUserRatingExistsAndThrowHttpException(dto.task_id, dto.user_id);
+
+        const rating = await this.taskRatingRepository.create(dto);
+        await this.updateTotalRating(dto.task_id);
+        return rating;
+    }
+
+    private async getRatingByTaskAndUserId(task_id: number, user_id: number) {
+        const rating = await this.taskRatingRepository.findOne({
+            include: [
+                {
+                    model: Task,
+                    where: {id: task_id},
+                },
+                {
+                    model: User,
+                    where: {id: user_id},
+                }
+            ]
+        });
+        return rating;
+    }
+
     private async updateTask(id: number, newData: CreateTaskDto) {
         const task = await this.getTask(id);
         await task.update(newData);
@@ -117,8 +152,38 @@ export class TasksService {
 
         if (filterSettings.theme) themeWhere['title'] = filterSettings.theme;
         if (filterSettings.user_id) usersWhere['id'] = filterSettings.user_id;
-        if (filterSettings.tags.length > 0) tagsWhere['title'] = filterSettings.tags;
+        if (filterSettings.tags?.length > 0) tagsWhere['title'] = filterSettings.tags;
 
         return {themeWhere, usersWhere, tagsWhere};
+    }
+
+    private async setAdditionalTaskData(task: Task, data: any) {
+        await this.solutionService.addSolutions(data.id, data.solutions);
+
+        const tags = await this.tagsService.getTagsByTitles(data.tags);
+        await task.$set('tags', tags.map(tag => tag.id));
+
+        await this.imagesService.addImages(data.images, data.id);
+    }
+
+    async getComments(task_id: number) {
+        const task = await this.getTask(task_id);
+        return task.comments;
+    }
+
+    private async checkIsUserRatingExistsAndThrowHttpException(task_id: number, user_id: number) {
+        const rating = await this.getRatingByTaskAndUserId(task_id, user_id);
+
+        if (rating) {
+            throw new HttpException('The rating of this user already exists', HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private async updateTotalRating(task_id: number) {
+        const task = await this.getTask(task_id);
+
+        const total_rating = this.helperService.getRatingSum(task) / (task.ratings.length || 1);
+        task.total_rating = total_rating;
+        await task.save();
     }
 }

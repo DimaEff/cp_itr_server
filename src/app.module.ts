@@ -18,7 +18,13 @@ import {Theme} from "./themes/theme.model";
 import {TagsModule} from './tags/tags.module';
 import {Tag} from "./tags/tag.model";
 import {TaskTag} from "./tasks/task_tag.model";
-import { ImagesModule } from './images/images.module';
+import {ImagesModule} from './images/images.module';
+import {Image} from './images/image.model';
+import {CommentsModule} from './comments/comments.module';
+import {Comment} from './comments/comment.model';
+import {UserCommentRating} from "./comments/user-comment-rating.model";
+import {UserTaskSolved} from "./solutions/user-task-solved.model";
+import {UserTaskRating} from "./tasks/user-task-rating.model";
 
 
 @Module({
@@ -35,7 +41,21 @@ import { ImagesModule } from './images/images.module';
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DB,
-            models: [User, Role, UserRole, Task, Solution, Theme, Tag, TaskTag],
+            models: [
+                User,
+                Role,
+                UserRole,
+                Task,
+                Solution,
+                Theme,
+                Tag,
+                TaskTag,
+                Image,
+                Comment,
+                UserCommentRating,
+                UserTaskSolved,
+                UserTaskRating,
+            ],
             autoLoadModels: true,
         }),
         UsersModule,
@@ -47,6 +67,7 @@ import { ImagesModule } from './images/images.module';
         ThemesModule,
         TagsModule,
         ImagesModule,
+        CommentsModule,
     ],
 })
 export class AppModule {

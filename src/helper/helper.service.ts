@@ -29,4 +29,8 @@ export class HelperService {
 
         return {limit, offset};
     }
+
+    getRatingSum(model: any, ratingsField: string = 'ratings', field: string = 'rating') {
+        return model[ratingsField].reduce(((sum, rating) => sum + rating[field]), 0);
+    }
 }

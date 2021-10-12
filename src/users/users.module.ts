@@ -10,13 +10,19 @@ import {RolesModule} from "../roles/roles.module";
 import {AuthModule} from "../auth/auth.module";
 import {HelperModule} from "../helper/helper.module";
 import {Task} from "../tasks/task.model";
+import {Comment} from '../comments/comment.model';
+import {UserCommentRating} from "../comments/user-comment-rating.model";
+import {UserTaskSolved} from "../solutions/user-task-solved.model";
+import {UserTaskRating} from "../tasks/user-task-rating.model";
 
 
 @Module({
     providers: [UsersService],
     controllers: [UsersController],
     imports: [
-        SequelizeModule.forFeature([User, Role, UserRole, Task]),
+        SequelizeModule.forFeature(
+            [User, Role, UserRole, Task, Comment, UserCommentRating, UserTaskSolved, UserTaskRating]
+        ),
         RolesModule,
         forwardRef(() => AuthModule),
         HelperModule,

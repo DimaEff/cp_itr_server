@@ -4,6 +4,9 @@ import {ApiProperty} from "@nestjs/swagger";
 import {Role} from "../roles/roles.model";
 import {UserRole} from '../roles/user_role.model';
 import {Task} from "../tasks/task.model";
+import {Comment} from "../comments/comment.model";
+import {UserCommentRating} from "../comments/user-comment-rating.model";
+import {UserTaskSolved} from "../solutions/user-task-solved.model";
 
 
 interface UserCreationAttrs {
@@ -34,4 +37,13 @@ export class User extends Model<User, UserCreationAttrs> {
 
     @HasMany(() => Task)
     tasks: Task[];
+
+    @HasMany(() => Comment)
+    comments: Comment[];
+
+    @HasMany(() => UserCommentRating)
+    comments_ratings: UserCommentRating[];
+
+    @HasMany(() => UserTaskSolved)
+    solved_tasks: UserTaskSolved[];
 }

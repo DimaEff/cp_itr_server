@@ -9,6 +9,7 @@ export const storageConfig = {
         keyFilename: './src/images/cp-itr-b84639e70e2f.json',
         bucket: 'staging.cp-itr.appspot.com',
         filename: (req, file, cb) => {
+            console.log(file)
             const fileExt = extname(file.originalname);
             cb(null,  `${uuid.v4()}${fileExt}`);
         },
