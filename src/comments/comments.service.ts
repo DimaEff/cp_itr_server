@@ -15,6 +15,19 @@ export class CommentsService {
                 @InjectModel(UserCommentRating) private commentsRatingsRepository: typeof UserCommentRating,
                 private helperService: HelperService) {}
 
+    async getCommentsByTaskId(task_id: number) {
+        const comments = await this.commentsRepository.findAll({
+            where: {task_id},
+            include: [
+                {
+                    model: UserCommentRating,
+                    attributes: ['user_id'],
+                }
+            ]
+        });
+        return comments;
+    }
+
     async addComment(dto: AddCommentDto) {
         const comment = await this.commentsRepository.create(dto);
         return comment;

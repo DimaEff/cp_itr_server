@@ -67,7 +67,7 @@ export class TasksController {
     @ApiResponse({status: 200, type: [Comment]})
     @Get('/comments/:task_id')
     getComments(@Param('task_id') task_id: number) {
-        return this.tasksService.getComments(task_id);
+        return this.commentsService.getCommentsByTaskId(task_id);
     }
 
     @ApiOperation({summary: 'Add a rating by user to comment'})

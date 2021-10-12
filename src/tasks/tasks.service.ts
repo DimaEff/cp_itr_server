@@ -19,6 +19,7 @@ import {Image} from "../images/image.model";
 import {ImagesService} from "../images/images.service";
 import {AddTaskRatingDto} from "./dto/add_task_rating.dto";
 import {UserTaskRating} from "./user-task-rating.model";
+import {UserTaskSolved} from "../solutions/user-task-solved.model";
 
 
 @Injectable()
@@ -62,6 +63,14 @@ export class TasksService {
                     {
                         model: Image,
                         attributes: ['image_url'],
+                    },
+                    {
+                        model: UserTaskSolved,
+                        attributes: ['id'],
+                    },
+                    {
+                        model: UserTaskRating,
+                        attributes: ['id'],
                     },
                 ],
                 order: [['createdAt', 'DESC']],
@@ -164,11 +173,6 @@ export class TasksService {
         await task.$set('tags', tags.map(tag => tag.id));
 
         await this.imagesService.addImages(data.images, data.id);
-    }
-
-    async getComments(task_id: number) {
-        const task = await this.getTask(task_id);
-        return task.comments;
     }
 
     private async checkIsUserRatingExistsAndThrowHttpException(task_id: number, user_id: number) {
