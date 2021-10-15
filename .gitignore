@@ -35,8 +35,10 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # enviroment
-.production.env
 .development.env
+.production.env
 
 # google cloud storage
 src/images/cp-itr-b84639e70e2f.json
+
+/build

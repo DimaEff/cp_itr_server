@@ -8,11 +8,13 @@ import {JwtModule} from "@nestjs/jwt";
 import {ConfigModule, ConfigService} from "@nestjs/config";
 import {JwtStrategy} from "./strategies/jwt.strategy";
 import {HelperModule} from "../helper/helper.module";
+import {FacebookStrategy} from "./strategies/facebook.strategy";
+import {VkontakteStrategy} from "./strategies/vk.strategy";
 
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy, JwtStrategy],
+  providers: [AuthService, GoogleStrategy, FacebookStrategy, VkontakteStrategy, JwtStrategy],
   imports: [
       forwardRef(() => UsersModule),
       ConfigModule,
@@ -24,6 +26,7 @@ import {HelperModule} from "../helper/helper.module";
           }),
           inject: [ConfigService],
       }),
+      HelperModule,
   ]
 })
 export class AuthModule {}

@@ -25,11 +25,12 @@ import {Comment} from './comments/comment.model';
 import {UserCommentRating} from "./comments/user-comment-rating.model";
 import {UserTaskSolved} from "./solutions/user-task-solved.model";
 import {UserTaskRating} from "./tasks/user-task-rating.model";
+import { AppController } from './app.controller';
 
 
 @Module({
-    controllers: [],
-    providers: [],
+    controllers: [AppController],
+    providers: [AppController],
     imports: [
         ConfigModule.forRoot({
             envFilePath: `.${process.env.NODE_ENV}.env`,

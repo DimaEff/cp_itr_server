@@ -33,4 +33,13 @@ export class HelperService {
     getRatingSum(model: any, ratingsField: string = 'ratings', field: string = 'rating') {
         return model[ratingsField].reduce(((sum, rating) => sum + rating[field]), 0);
     }
+
+    createAuthPayload(profile: any) {
+        const {displayName, id} = profile;
+        console.log(displayName, id)
+        return {
+            sn_uid: id,
+            user_name: displayName,
+        };
+    }
 }

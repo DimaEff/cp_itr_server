@@ -19,10 +19,12 @@ export class AuthService {
 
         const user = await this.usersService.getUserBySNId(req.user.sn_uid);
         if (user) {
+            console.log('access token')
             return this.getAccessToken(user);
         } else {
-            const userDto = plainToClass(CreateUserDto, req.user);
-            const newUser = await this.registration(userDto);
+            console.log('newUser')
+            // const userDto = plainToClass(CreateUserDto, req.user);
+            const newUser = await this.registration(req.user);
             return this.getAccessToken(newUser);
         }
     }
@@ -32,6 +34,7 @@ export class AuthService {
             id: user.id,
             sn_uid: user.sn_uid,
         };
+        console.log('get access token')
         return {accessToken: this.jwtService.sign(payload)};
     }
 

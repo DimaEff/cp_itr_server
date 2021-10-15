@@ -26,6 +26,29 @@ export class AuthController {
         return this.authService.login(req);
     }
 
+    @Get("/facebook")
+    @UseGuards(AuthGuard("facebook"))
+    async facebookLogin() {}
+
+    @Get("/facebook/redirect")
+    @UseGuards(AuthGuard("facebook"))
+    async facebookLoginRedirect(@Req() req) {
+        return this.authService.login(req);
+    }
+
+    @Get("/vkontakte")
+    @UseGuards(AuthGuard("vkontakte"))
+    async vkontakteLogin() {
+        console.log('vk')
+    }
+
+    @Get("/vkontakte/redirect")
+    @UseGuards(AuthGuard("vkontakte"))
+    async vkontakteLoginRedirect(@Req() req) {
+        console.log('vk redirect')
+        return this.authService.login(req);
+    }
+
     @ApiOperation({summary: 'Get profile of current user'})
     @ApiResponse({status: 200, type: User})
     @UseGuards(AuthGuard('jwt'))
