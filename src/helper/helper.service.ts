@@ -24,9 +24,8 @@ export class HelperService {
     }
 
     getPaginationValues (paginationDto: PaginationDto, defaultLimit: number = 10, startPage: number = 0) {
-        const limit = paginationDto?.limit || defaultLimit;
-        const offset = ((paginationDto?.page - 1) * limit) || startPage;
-
+        const limit = +paginationDto?.limit || defaultLimit;
+        const offset = ((+paginationDto?.page - 1) * limit) || startPage;
         return {limit, offset};
     }
 

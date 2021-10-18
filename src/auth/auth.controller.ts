@@ -1,52 +1,36 @@
-import {Controller, Get, Req, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Post, Req, UseGuards} from '@nestjs/common';
 import {AuthGuard} from "@nestjs/passport";
-import {ApiExcludeEndpoint, ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
+import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 
 import {AuthService} from "./auth.service";
 import {User} from "../users/users.model";
 import {UsersService} from "../users/users.service";
+import {AuthTokenDto} from "./dto/token.dto";
+import {GoogleAuthenticationService} from "./google_auth.service";
+import {VkAuthService} from "./vk_auth.service";
 
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService,
-                private usersService: UsersService) {}
+                private usersService: UsersService,
+                private googleAuthService: GoogleAuthenticationService,
+                private vkAuthService: VkAuthService) {}
 
-    @ApiOperation({summary: 'Authenticate with Google'})
-    @ApiResponse({status: 200, type: User})
-    @Get('/google')
-    @UseGuards(AuthGuard('google'))
-    async googleAuth(@Req() req) {}
-
-    @ApiExcludeEndpoint()
-    @Get('/google/redirect')
-    @UseGuards(AuthGuard('google'))
-    googleAuthRedirect(@Req() req) {
-        return this.authService.login(req);
+    @Post('google')
+    async googleAuth(@Body() token: AuthTokenDto, @Req() req: any): Promise<any> {
+        await this.googleAuthService.verify(token.token);
+        const userData = await this.authService.getGoogleData(token.token);
+        return this.authService.login(userData);
     }
 
-    @Get("/facebook")
-    @UseGuards(AuthGuard("facebook"))
-    async facebookLogin() {}
-
-    @Get("/facebook/redirect")
-    @UseGuards(AuthGuard("facebook"))
-    async facebookLoginRedirect(@Req() req) {
-        return this.authService.login(req);
-    }
-
-    @Get("/vkontakte")
-    @UseGuards(AuthGuard("vkontakte"))
-    async vkontakteLogin() {
-        console.log('vk')
-    }
-
-    @Get("/vkontakte/redirect")
-    @UseGuards(AuthGuard("vkontakte"))
-    async vkontakteLoginRedirect(@Req() req) {
-        console.log('vk redirect')
-        return this.authService.login(req);
+    @Post('vk')
+    async vkAuth(@Body() dto: AuthTokenDto) {
+        const accInfo = await this.vkAuthService.getVkToken(dto);
+        const {user_id, access_token} = accInfo.data;
+        const userData = await this.vkAuthService.getUserDataFromVk(user_id, access_token);
+        return this.authService.login(userData);
     }
 
     @ApiOperation({summary: 'Get profile of current user'})
@@ -54,7 +38,6 @@ export class AuthController {
     @UseGuards(AuthGuard('jwt'))
     @Get('/profile')
     getProfile(@Req() req) {
-        console.log(req.user, 'contr')
         return this.usersService.getUser(req.user.id);
     }
 }

@@ -115,9 +115,9 @@ export class TasksService {
         }
     }
 
-    async deleteTask(dto: DeleteTaskDto) {
+    async deleteTask(id: number) {
         try {
-            const task = await this.getTask(dto.task_id);
+            const task = await this.getTask(id);
             await task.destroy();
         } catch (e) {
             throw new HttpException('Task not found', HttpStatus.NOT_FOUND);

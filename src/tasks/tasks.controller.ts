@@ -1,4 +1,15 @@
-import {Body, Controller, Get, Param, Post, Query, UploadedFiles, UseGuards, UseInterceptors} from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Post,
+    Query,
+    UploadedFiles,
+    UseGuards,
+    UseInterceptors
+} from '@nestjs/common';
 import {AuthGuard} from "@nestjs/passport";
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {FilesInterceptor} from "@nestjs/platform-express";
@@ -50,9 +61,9 @@ export class TasksController {
     @ApiOperation({summary: 'Delete a task'})
     @ApiResponse({status: 200})
     @UseGuards(AuthGuard('jwt'))
-    @Post('delete')
-    deleteTask(@Body() dto: DeleteTaskDto) {
-        return this.tasksService.deleteTask(dto);
+    @Delete('delete/:id')
+    deleteTask(@Param('id') id: number) {
+        return this.tasksService.deleteTask(id);
     }
 
     @ApiOperation({summary: 'Creating a task`s comment'})

@@ -1,30 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {JwtService} from "@nestjs/jwt";
-import {plainToClass} from "class-transformer";
+import {HttpService} from '@nestjs/axios';
 
 import {UsersService} from "../users/users.service";
 import {CreateUserDto} from "../users/dto/create_user.dto";
 import {User} from '../users/users.model';
 
 
+class AxiosResponse<T> {
+}
+
 @Injectable()
 export class AuthService {
     constructor(private usersService: UsersService,
-                private jwtService: JwtService) {}
+                private jwtService: JwtService,
+                private httpService: HttpService) {
+    }
 
-    async login(req) {
-        if (!req.user) {
+    async getGoogleData(token: string): Promise<AxiosResponse<any>>{
+        const userData = await this.httpService
+            .get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${token}`)
+            .toPromise();
+        return {sn_uid: userData.data.id, displayName: userData.data.name};
+    }
+
+    async login(userData) {
+        if (!userData.sn_uid) {
             return 'No user';
         }
 
-        const user = await this.usersService.getUserBySNId(req.user.sn_uid);
+        const user = await this.usersService.getUserBySNId(userData.sn_uid);
         if (user) {
-            console.log('access token')
             return this.getAccessToken(user);
         } else {
-            console.log('newUser')
-            // const userDto = plainToClass(CreateUserDto, req.user);
-            const newUser = await this.registration(req.user);
+            const newUser = await this.registration(userData);
             return this.getAccessToken(newUser);
         }
     }

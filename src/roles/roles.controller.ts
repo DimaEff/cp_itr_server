@@ -18,10 +18,10 @@ export class RolesController {
         return this.roleService.createRole(roleDto);
     }
 
-    @ApiOperation({summary: 'Get a role by value'})
+    @ApiOperation({summary: 'Get all roles'})
     @ApiResponse({status: 200, type: Role})
-    @Get('/:value')
-    getRoleByValue(@Param('value') value: string) {
-        return this.roleService.getRoleByValue(value);
+    @Get()
+    getAllRole() {
+        return this.roleService.getAllRoles();
     }
 }

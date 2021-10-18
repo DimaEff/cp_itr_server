@@ -2,10 +2,12 @@ import {NestFactory} from "@nestjs/core";
 
 import {AppModule} from "./app.module";
 import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
+import {GraphQLModule} from '@nestjs/graphql';
 
 
 const start = async () => {
     const PORT = process.env.PORT || 5000;
+    console.log(process.env.GOOGLE_REDIRECT_URI);
     const app = await NestFactory.create(AppModule);
     app.enableCors();
 

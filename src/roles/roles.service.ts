@@ -18,4 +18,8 @@ export class RolesService {
         const role = this.roleRepository.findOne({where: {value}});
         return role;
     }
+
+    async getAllRoles() {
+        return this.roleRepository.findAll();
+    }
 }

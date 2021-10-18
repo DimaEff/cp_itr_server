@@ -34,20 +34,27 @@ export class UsersService {
             .findAndCountAll({
                 ...pagination,
                 distinct: true,
-                include: [
-                    {
-                        model: Role,
-                        attributes: ['id', 'value'],
-                    },
-                ],
+                attributes: ['id', 'user_name'],
             });
         return users;
     }
 
     async getUser(id: string) {
-        console.log(id, 'getUser')
         const user = await this.usersRepository
-            .findByPk(id, {include: {all: true}});
+            .findByPk(id, {
+                include: [
+                    {
+                        model: Role,
+                        attributes: ['id', 'value'],
+                        through: {
+                            attributes: [],
+                        }
+                    },
+                ],
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt', 'sn_uid'],
+                }
+            });
         return user;
     }
 
@@ -76,11 +83,9 @@ export class UsersService {
         return user;
     }
 
-    async delete(dto: DeleteUserDto) {
+    async delete(id: number) {
         try {
-            console.log('delete user')
-            const user = await this.usersRepository.findByPk(dto.user_id);
-            console.log(user)
+            const user = await this.usersRepository.findByPk(id);
             await user.destroy();
         } catch (e) {
             throw new HttpException('User not found', HttpStatus.NOT_FOUND);

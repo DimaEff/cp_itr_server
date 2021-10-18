@@ -35,7 +35,6 @@ export class SolutionsService {
         const solutions = await this.findSolutionsByTaskId(dto.task_id);
 
         const solved = solutions.map(s => s.text).includes(dto.solution.toLowerCase());
-        console.log(solved, solutions)
         const solvedObject = {solved, task_id: dto.task_id, user_id: dto.user_id};
         const userTaskSolved = await this.solvedSolutionsRepository.create(solvedObject);
 
