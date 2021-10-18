@@ -34,7 +34,6 @@ import {UserTaskRating} from "./user-task-rating.model";
 import {AddTaskRatingDto} from "./dto/add_task_rating.dto";
 
 
-
 @ApiTags('tasks')
 @Controller('tasks')
 export class TasksController {
